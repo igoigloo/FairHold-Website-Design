@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ViewToggle } from "@/components/view-toggle"
+import { useView } from "@/contexts/view-context"
 import {
   Shield,
   Plus,
@@ -41,6 +43,7 @@ import {
 export default function DashboardPage() {
   const searchParams = useSearchParams()
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const { currentView, isClient, isVendor } = useView()
 
   useEffect(() => {
     if (searchParams.get("created") === "true") {
@@ -48,7 +51,7 @@ export default function DashboardPage() {
     }
   }, [searchParams])
 
-  const currentUser = testUsers[0] // Sarah Johnson as the demo user
+  const currentUser = isClient ? testUsers[0] : testUsers[1] // Sarah Johnson (client) or Michael Chen (vendor)
   const userAgreements = getAgreementsByUserId(currentUser.id)
   const activeAgreements = userAgreements.filter((agreement) => agreement.status === "active")
   const completedAgreements = userAgreements.filter((agreement) => agreement.status === "completed")
@@ -107,17 +110,31 @@ export default function DashboardPage() {
                 <a href="/dashboard" className="text-blue-700 font-medium border-b-2 border-blue-700 pb-4">
                   Dashboard
                 </a>
-                <a href="/agreements" className="text-gray-600 hover:text-gray-900 font-medium">
+                <a
+                  href="/agreements"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 hover:scale-105 transform"
+                >
                   Agreements
                 </a>
-                <a href="/wallet" className="text-gray-600 hover:text-gray-900 font-medium">
+                <a
+                  href="/wallet"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 hover:scale-105 transform"
+                >
                   Wallet
                 </a>
-                <a href="/help" className="text-gray-600 hover:text-gray-900 font-medium">
+                <a
+                  href="/help"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 hover:scale-105 transform"
+                >
                   Help
                 </a>
               </nav>
             </div>
+
+            <div className="hidden md:flex">
+              <ViewToggle />
+            </div>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -157,8 +174,21 @@ export default function DashboardPage() {
           <div className="flex-1">
             {/* Page Header */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-2">Manage your agreements and track your earnings</p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {isClient ? "Client Dashboard" : "Vendor Dashboard"}
+                  </h1>
+                  <p className="text-gray-600 mt-2">
+                    {isClient
+                      ? "Manage your agreements and track your earnings"
+                      : "Manage your services and client agreements"}
+                  </p>
+                </div>
+                <div className="md:hidden">
+                  <ViewToggle />
+                </div>
+              </div>
             </div>
 
             {showSuccessMessage && (
@@ -233,21 +263,51 @@ export default function DashboardPage() {
             {/* Quick Actions */}
             <div className="mb-8">
               <div className="flex flex-wrap gap-4">
-                <Button className="bg-blue-700 hover:bg-blue-800" asChild>
-                  <a href="/create-agreement">
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Agreement
-                  </a>
-                </Button>
-                <Button variant="outline">
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  Fund Escrow
-                </Button>
-                <Button variant="outline">
+                {isClient ? (
+                  <>
+                    <Button
+                      className="bg-blue-700 hover:bg-blue-800 transition-all duration-200 hover:scale-105 transform"
+                      asChild
+                    >
+                      <a href="/create-agreement">
+                        <Plus className="h-4 w-4 mr-2" />
+                        New Agreement
+                      </a>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="transition-all duration-200 hover:scale-105 transform bg-transparent"
+                    >
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      Fund Escrow
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button className="bg-green-700 hover:bg-green-800 transition-all duration-200 hover:scale-105 transform">
+                      <Plus className="h-4 w-4 mr-2" />
+                      New Service Offer
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="transition-all duration-200 hover:scale-105 transform bg-transparent"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Complete Milestone
+                    </Button>
+                  </>
+                )}
+                <Button
+                  variant="outline"
+                  className="transition-all duration-200 hover:scale-105 transform bg-transparent"
+                >
                   <BarChart3 className="h-4 w-4 mr-2" />
                   View Analytics
                 </Button>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  className="transition-all duration-200 hover:scale-105 transform bg-transparent"
+                >
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
                 </Button>
@@ -257,8 +317,12 @@ export default function DashboardPage() {
             {/* Recent Agreements Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Agreements</CardTitle>
-                <CardDescription>Your latest service agreements and their status</CardDescription>
+                <CardTitle>{isClient ? "Your Agreements" : "Client Agreements"}</CardTitle>
+                <CardDescription>
+                  {isClient
+                    ? "Your latest service agreements and their status"
+                    : "Agreements where you're providing services"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -323,7 +387,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium">Connected (Demo)</span>
                 </div>
                 <div className="space-y-2 text-sm text-muted-foreground">
@@ -333,7 +397,11 @@ export default function DashboardPage() {
                   <p>Network: Base Sepolia</p>
                   <p>Balance: ${(stats.totalEscrowed + 2325.25).toLocaleString()} USDC</p>
                 </div>
-                <Button variant="outline" size="sm" className="w-full mt-4 bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-4 bg-transparent transition-all duration-200 hover:scale-105 transform"
+                >
                   <Wallet className="h-4 w-4 mr-2" />
                   Manage Wallet
                 </Button>
@@ -370,7 +438,11 @@ export default function DashboardPage() {
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="w-full mt-4 bg-transparent">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-4 bg-transparent transition-all duration-200 hover:scale-105 transform"
+                >
                   View All Transactions
                 </Button>
               </CardContent>

@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { WalletProvider } from "@/components/wallet-provider"
 import { DemoBanner } from "@/components/demo-banner"
 import { GlobalErrorHandler } from "@/components/global-error-handler"
+import { ViewProvider } from "@/contexts/view-context"
 import "./globals.css"
 
 const inter = Inter({
@@ -29,8 +30,10 @@ export default function RootLayout({
       <body>
         <GlobalErrorHandler />
         <WalletProvider>
-          <DemoBanner />
-          {children}
+          <ViewProvider>
+            <DemoBanner />
+            {children}
+          </ViewProvider>
         </WalletProvider>
       </body>
     </html>
