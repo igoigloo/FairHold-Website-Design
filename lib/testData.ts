@@ -88,7 +88,7 @@ export const testUsers: User[] = [
     joinedDate: "2024-01-15",
     totalAgreements: 3,
     totalEscrowed: 45000,
-    yieldEarned: 1847.5,
+    yieldEarned: 0, // Clients don't earn yield
   },
   {
     id: "client-2",
@@ -100,7 +100,7 @@ export const testUsers: User[] = [
     joinedDate: "2024-02-20",
     totalAgreements: 2,
     totalEscrowed: 28000,
-    yieldEarned: 1148.0,
+    yieldEarned: 0, // Clients don't earn yield
   },
   {
     id: "vendor-1",
@@ -622,8 +622,16 @@ export const getDocumentsByAgreementId = (agreementId: string): Document[] => {
 }
 
 export const calculateTotalYieldEarned = (userId: string): number => {
+  const user = getUserById(userId)
+  if (!user || user.role === "client") {
+    return 0 // Clients don't earn yield
+  }
+
   const userAgreements = getAgreementsByUserId(userId)
-  return userAgreements.reduce((total, agreement) => total + agreement.yieldEarned, 0)
+  return userAgreements.reduce((total, agreement) => {
+    // Only count yield if user is the vendor
+    return agreement.vendorId === userId ? total + agreement.yieldEarned : total
+  }, 0)
 }
 
 export const calculateTotalEscrowed = (userId: string): number => {

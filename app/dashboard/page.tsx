@@ -59,7 +59,7 @@ export default function DashboardPage() {
   const stats = {
     activeAgreements: activeAgreements.length,
     totalEscrowed: calculateTotalEscrowed(currentUser.id),
-    yieldEarned: calculateTotalYieldEarned(currentUser.id),
+    yieldEarned: isClient ? 0 : calculateTotalYieldEarned(currentUser.id), // Clients get no yield
     completedAgreements: completedAgreements.length,
   }
 
@@ -244,7 +244,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">${stats.yieldEarned.toFixed(2)}</div>
-                  <p className="text-xs text-green-600">4.1% APY</p>
+                  <p className="text-xs text-green-600">{isClient ? "Vendors earn yield" : "4.1% APY"}</p>
                 </CardContent>
               </Card>
 
@@ -457,21 +457,27 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Current APY</span>
-                    <span className="text-lg font-bold text-green-600">4.1%</span>
+                    <span className="text-lg font-bold text-green-600">{isClient ? "N/A" : "4.1%"}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Monthly Projection</span>
-                    <span className="text-sm font-medium">${((stats.totalEscrowed * 0.041) / 12).toFixed(2)}</span>
+                    <span className="text-sm font-medium">
+                      ${isClient ? "0.00" : ((stats.totalEscrowed * 0.041) / 12).toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Annual Projection</span>
-                    <span className="text-sm font-medium">${(stats.totalEscrowed * 0.041).toFixed(2)}</span>
+                    <span className="text-sm font-medium">
+                      ${isClient ? "0.00" : (stats.totalEscrowed * 0.041).toFixed(2)}
+                    </span>
                   </div>
                   <div className="pt-4 border-t">
                     <div className="h-20 bg-gradient-to-r from-green-100 to-green-200 rounded-lg flex items-center justify-center">
                       <TrendingUp className="h-8 w-8 text-green-600" />
                     </div>
-                    <p className="text-xs text-center text-muted-foreground mt-2">Yield chart visualization</p>
+                    <p className="text-xs text-center text-muted-foreground mt-2">
+                      {isClient ? "Yield goes to service providers" : "Yield chart visualization"}
+                    </p>
                   </div>
                 </div>
               </CardContent>
