@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -66,8 +67,10 @@ const weddingTemplate = [
 ]
 
 export default function CreateAgreementPage() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [serviceDate, setServiceDate] = useState<Date>()
+  const [isCreating, setIsCreating] = useState(false)
   const [formData, setFormData] = useState({
     serviceType: "",
     projectName: "",
@@ -122,6 +125,24 @@ export default function CreateAgreementPage() {
   const updateMilestone = (index: number, field: string, value: string | number) => {
     const updated = milestones.map((milestone, i) => (i === index ? { ...milestone, [field]: value } : milestone))
     setMilestones(updated)
+  }
+
+  const handleCreateAgreement = async () => {
+    setIsCreating(true)
+
+    // Simulate API call to create agreement
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    // In a real app, this would send data to backend
+    console.log("[v0] Creating agreement with data:", {
+      ...formData,
+      serviceDate,
+      milestones,
+      totalAmount: milestones.reduce((sum, m) => sum + m.amount, 0),
+    })
+
+    // Navigate to dashboard with success message
+    router.push("/dashboard?created=true")
   }
 
   return (
@@ -534,9 +555,18 @@ export default function CreateAgreementPage() {
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
-            <Button className="bg-green-700 hover:bg-green-800">
-              <Check className="h-4 w-4 mr-2" />
-              Create Agreement
+            <Button onClick={handleCreateAgreement} disabled={isCreating} className="bg-green-700 hover:bg-green-800">
+              {isCreating ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Creating Agreement...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Create Agreement
+                </>
+              )}
             </Button>
           )}
         </div>

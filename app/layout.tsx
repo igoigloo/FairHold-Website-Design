@@ -2,6 +2,8 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { WalletProvider } from "@/components/wallet-provider"
+import { DemoBanner } from "@/components/demo-banner"
+import { GlobalErrorHandler } from "@/components/global-error-handler"
 import "./globals.css"
 
 const inter = Inter({
@@ -25,7 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} antialiased`}>
       <body>
-        <WalletProvider>{children}</WalletProvider>
+        <GlobalErrorHandler />
+        <WalletProvider>
+          <DemoBanner />
+          {children}
+        </WalletProvider>
       </body>
     </html>
   )

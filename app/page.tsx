@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { DemoBanner } from "@/components/demo-banner"
 import { Shield, TrendingUp, Scale, Heart, Building2, Home, Laptop } from "lucide-react"
+import Link from "next/link"
 
 export default function LandingPage() {
   return (
@@ -25,10 +26,14 @@ export default function LandingPage() {
               <a href="#use-cases" className="text-gray-600 hover:text-gray-900 font-medium">
                 Use Cases
               </a>
-              <Button variant="outline" className="ml-4 bg-transparent">
-                Sign In
-              </Button>
-              <Button className="bg-blue-700 hover:bg-blue-800">Get Started</Button>
+              <Link href="/dashboard">
+                <Button variant="outline" className="ml-4 bg-transparent">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/create-agreement">
+                <Button className="bg-blue-700 hover:bg-blue-800">Get Started</Button>
+              </Link>
             </nav>
           </div>
         </div>
@@ -51,12 +56,16 @@ export default function LandingPage() {
               while safely held in escrow.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-lg px-8 py-4">
-                Start Your Agreement
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
-                Join as Service Provider
-              </Button>
+              <Link href="/create-agreement">
+                <Button size="lg" className="bg-blue-700 hover:bg-blue-800 text-lg px-8 py-4">
+                  Start Your Agreement
+                </Button>
+              </Link>
+              <Link href="/provider-signup">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
+                  Join as Service Provider
+                </Button>
+              </Link>
             </div>
 
             {/* Trust Indicators */}
@@ -257,9 +266,11 @@ export default function LandingPage() {
             agreements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
-              Start Your Agreement
-            </Button>
+            <Link href="/create-agreement">
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
+                Start Your Agreement
+              </Button>
+            </Link>
             <Button
               size="lg"
               variant="outline"

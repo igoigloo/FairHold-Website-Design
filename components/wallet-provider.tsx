@@ -40,10 +40,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    // Explicitly prevent any wallet detection
     const preventWalletDetection = () => {
       if (typeof window !== "undefined") {
-        // Override any potential wallet detection
         console.log("[FairHold] Demo mode - wallet detection disabled")
       }
     }
